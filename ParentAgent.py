@@ -3,12 +3,13 @@ from langchain_nvidia_ai_endpoints import ChatNVIDIA
 from pydantic import BaseModel, Field
 from typing import List
 from langchain_core.output_parsers import PydanticOutputParser
+from state import state
 
 #export NVIDIA_API_KEY="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"
 NVIDIA = ChatNVIDIA(model="deepseek-ai/deepseek-r1-0528")
 
 class template(BaseModel):
-    POV: List[str] = Field(description = "Choose from [DetectionAgent, VisualizationAgent, LocationAgent, SizeAgent]")
+    requiredAgents: List[str] = Field(description = "Choose from [DetectionAgent, VisualizationAgent, LocationAgent, SizeAgent]")
 
 parser = PydanticOutputParser(pydantic_object=template)
 
@@ -38,9 +39,6 @@ planner_prompt = ChatPromptTemplate.from_template(
 planner = planner_prompt | NVIDIA | parser
 
 
-result = planner.invoke({"question": "How many people are in the image?"})
-
-print(result)
-
-
-# parent agent blah blah
+def get_agents(s: state):
+    result = planner.invoke({"question": s["question"]})
+    return result
