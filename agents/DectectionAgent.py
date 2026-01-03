@@ -1,7 +1,5 @@
-import os
-import cv2
-import matplotlib.pyplot as plt
 from ultralytics import YOLO
+from container.state import state
 
 
 MODEL_NAME = "yolo11n.pt"
@@ -9,6 +7,8 @@ model = YOLO(MODEL_NAME)
 
 
 def getCount(img_path):
+    state['completedAgents'].append("DetectionAgent")
+
     results = model(img_path)
 
     classes = results[0].boxes.cls

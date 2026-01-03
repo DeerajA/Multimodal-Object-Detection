@@ -1,7 +1,5 @@
-import os
-import cv2
-import matplotlib.pyplot as plt
 from ultralytics import YOLO
+from container.state import state
 
 
 MODEL_NAME = "yolo11n.pt"
@@ -9,6 +7,8 @@ model = YOLO(MODEL_NAME)
 
 
 def getLocations(img_path):
+    state['completedAgents'].append("LocationAgent")
+
     results = model(img_path)
     boxes = results[0].boxes.xyxy
     classes = results[0].boxes.cls
