@@ -16,27 +16,26 @@ parser = PydanticOutputParser(pydantic_object=template)
 
 
 planner_prompt = ChatPromptTemplate.from_template(
-    """
+   """
     You must return ONLY valid JSON.
     Do not add text, explanations, or formatting.
     Your role is to determine which agents are required to answer the question,
     Analyze the question and select all relevant agents needed to complete the task.
-    
+    The answer should always **end with "LastAgent"** as the final agent in the list.
+
     Available agents include (but are not limited to):
         DetectionAgent: detects all objects in the image and returns a dictionary of object names and their counts
         VisualizationAgent: returns an image showing how the YOLO model detected objects (with bounding boxes)
         LocationAgent: returns each detected object with its bounding box coordinates (x1, y1, x2, y2)
-        SizeAgent: returns the total size of the image (width and height)
-        GeneralAgent: return this if you dont know whichother model to return
+        SizeAgent: returns the total size of the image (width and height), which helps you understand where everything is in relation to the whole picture
 
     Schema:
     {format_instructions}
-    
+
     Example:
         Question: "What objects are in this image and where are they located?"
-        Answer: {{"requiredAgents": ["DetectionAgent", "LocationAgent", "SizeAgent"]}}
-    
-    
+        Answer: {{"requiredAgents": ["DetectionAgent", "LocationAgent", "SizeAgent", "LastAgent"]}}
+
     Question:
     {question}
     """,
@@ -47,8 +46,11 @@ planner = planner_prompt | NVIDIA | parser
 
 
 def choose_agent(state):
-    result = planner.invoke({"question": state["question"]})
-    state['requiredAgents'] = result.requiredAgents
+    if "required_agents" not in state:
+        result = planner.invoke({"question": state["question"]})
+        state['requiredAgents'] = result.requiredAgents
+        state['completedAgents'] = []
+
     for agent in state['requiredAgents']:
         if agent not in state['completedAgents']:
             return agent

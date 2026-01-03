@@ -8,7 +8,7 @@ model = YOLO(MODEL_NAME)
 
 
 def show_plot(img_path):
-    state['completedAgents'].append("VisualizationAgent")
+    state.completedAgents.append("VisualizationAgent")
 
     results = model(img_path)
     # Plot and log the results

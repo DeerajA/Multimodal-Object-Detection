@@ -7,9 +7,9 @@ model = YOLO(MODEL_NAME)
 
 
 def getCount(img_path):
-    state['completedAgents'].append("DetectionAgent")
+    state.completedAgents.append("DetectionAgent")
 
-    results = model(img_path)
+    results = model(img_path, show=False, verbose=False)
 
     classes = results[0].boxes.cls
     names = results[0].names
@@ -19,4 +19,4 @@ def getCount(img_path):
         name = names[int(cls)]
         counts[name] = counts.get(name, 0) + 1
 
-    return counts
+    state.DetectionAgent = counts

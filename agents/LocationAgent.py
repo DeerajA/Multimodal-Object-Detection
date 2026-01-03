@@ -7,7 +7,7 @@ model = YOLO(MODEL_NAME)
 
 
 def getLocations(img_path):
-    state['completedAgents'].append("LocationAgent")
+    state.completedAgents.append("LocationAgent")
 
     results = model(img_path)
     boxes = results[0].boxes.xyxy
@@ -18,4 +18,5 @@ def getLocations(img_path):
     for box, cls in zip(boxes, classes):
         x1, y1, x2, y2 = box
         locations.append(f"Name: {names[int(cls)]}, Location: {x1.item(), y1.item(), x2.item(), y2.item()}")
-    return locations
+    
+    state.LocationAgent = locations
