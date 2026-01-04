@@ -1,6 +1,6 @@
 from typing import List, Optional, TypedDict, Dict, Tuple
 
-class state:
+class state(TypedDict, total=False):
     question: str
     image_path: str
 
@@ -10,3 +10,7 @@ class state:
     DetectionAgent: Dict[str, int]
     LocationAgent: List[str]
     SizeAgent: Tuple[int, int]
+
+    response: str 
+
+    nextAgent: str
